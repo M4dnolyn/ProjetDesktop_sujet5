@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
 import tg.univlome.epl.pharmarciemanagement.services.AuthService;
 import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
 
@@ -55,8 +56,10 @@ public class SignUpController {
     private void goToLogin() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
             Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.setScene(scene);
             stage.centerOnScreen();
         } catch (Exception e) {
             e.printStackTrace();

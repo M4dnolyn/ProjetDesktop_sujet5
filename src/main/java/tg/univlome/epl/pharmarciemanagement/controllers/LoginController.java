@@ -54,8 +54,10 @@ public class LoginController {
     private void loadView(String fxml) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/" + fxml));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
             Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.setScene(scene);
             stage.centerOnScreen();
         } catch (Exception e) {
             e.printStackTrace();

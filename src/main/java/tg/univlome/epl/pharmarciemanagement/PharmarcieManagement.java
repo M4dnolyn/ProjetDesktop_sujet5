@@ -14,8 +14,10 @@ public class PharmarcieManagement extends Application {
         DatabaseConnection.getConnection();
 
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
         primaryStage.setTitle("Gestion de Pharmacie");
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
