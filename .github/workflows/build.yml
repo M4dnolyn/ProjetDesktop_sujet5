@@ -48,6 +48,7 @@ jobs:
             --name PharmarcieManager `
             --module-path "$env:RUNNER_TEMP\javafx-jmods\javafx-jmods-21" `
             --add-modules javafx.controls,javafx.fxml `
+            --icon src/main/resources/images/icon.ico `
             --dest output
 
       - name: Generate installer
@@ -59,6 +60,7 @@ jobs:
             --name PharmarcieManager `
             --module-path "$env:RUNNER_TEMP\javafx-jmods\javafx-jmods-21" `
             --add-modules javafx.controls,javafx.fxml `
+            --icon src/main/resources/images/icon.ico `
             --dest output
 
       - name: Upload app-image artifact
