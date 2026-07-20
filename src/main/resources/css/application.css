@@ -1,0 +1,76 @@
+/* Style général */
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-background-color: #f5f6fa;
+}
+
+/* Labels titre */
+.label-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Boutons */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #dcdde1;
+    -fx-border-radius: 4;
+}
+
+.table-column {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 8;
+}
+
+/* Ligne périmée (rouge) */
+.row-expired {
+    -fx-background-color: #ffcccc;
+}
+
+/* Ligne proche péremption (orange) */
+.row-expiring-soon {
+    -fx-background-color: #ffeaa7;
+}
+
+/* Champs texte */
+.text-field, .date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #dcdde1;
+    -fx-border-radius: 4;
+    -fx-padding: 6;
+}
+
+.text-field:focused, .date-picker:focused {
+    -fx-border-color: #3498db;
+}
+
+/* Hyperlien */
+.hyperlink {
+    -fx-text-fill: #3498db;
+}
+
+/* Labels statistiques */
+.stats-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.stats-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #27ae60;
+}
