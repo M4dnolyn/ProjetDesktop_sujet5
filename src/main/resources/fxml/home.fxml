@@ -3,16 +3,40 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="15" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.HomeController">
+<VBox spacing="10" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.HomeController">
     <padding>
-        <Insets top="40" right="40" bottom="40" left="40" />
+        <Insets top="15" right="15" bottom="15" left="15" />
     </padding>
 
-    <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Accueil" />
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Gestion des médicaments" />
+        <Label fx:id="welcomeLabel" text="" />
+        <Button onAction="#handleLogout" text="Se déconnecter" />
+    </HBox>
 
-    <Label fx:id="welcomeLabel" text="Bienvenue" />
+    <HBox spacing="20">
+        <Label text="Total : " />
+        <Label fx:id="totalCountLabel" text="0" />
+        <Label text="Valeur stock : " />
+        <Label fx:id="stockValueLabel" text="0 FCFA" />
+        <Label text="Périmés : " />
+        <Label fx:id="expiredCountLabel" text="0" />
+    </HBox>
 
-    <Button onAction="#handleLogout" text="Se déconnecter" />
+    <TableView fx:id="medicamentTable">
+        <columns>
+            <TableColumn fx:id="codeColumn" text="Code" />
+            <TableColumn fx:id="designationColumn" text="Désignation" />
+            <TableColumn fx:id="quantiteColumn" text="Quantité" />
+            <TableColumn fx:id="prixColumn" text="Prix unitaire" />
+            <TableColumn fx:id="datePeremptionColumn" text="Date péremption" />
+        </columns>
+    </TableView>
+
+    <Button onAction="#handleAddMedicament" text="Ajouter un médicament" />
 </VBox>
