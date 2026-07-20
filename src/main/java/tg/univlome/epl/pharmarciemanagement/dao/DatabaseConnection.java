@@ -17,8 +17,8 @@ public class DatabaseConnection {
     private static Connection connection;
 
     public static Connection getConnection() {
-        if (connection == null) {
-            try {
+        try {
+            if (connection == null || connection.isClosed()) {
                 Path dbPath = Paths.get(DB_NAME);
                 boolean needsInit = !Files.exists(dbPath);
 
@@ -27,9 +27,9 @@ public class DatabaseConnection {
                 if (needsInit) {
                     initDatabase();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return connection;
     }
