@@ -47,7 +47,7 @@ jobs:
             --main-class tg.univlome.epl.pharmarciemanagement.PharmarcieManagement `
             --name PharmarcieManager `
             --module-path "$env:RUNNER_TEMP\javafx-jmods\javafx-jmods-21" `
-            --add-modules javafx.controls,javafx.fxml `
+            --add-modules javafx.controls,javafx.fxml,java.sql `
             --icon src/main/resources/images/icon.ico `
             --dest output
 
@@ -59,7 +59,7 @@ jobs:
             --main-class tg.univlome.epl.pharmarciemanagement.PharmarcieManagement `
             --name PharmarcieManager `
             --module-path "$env:RUNNER_TEMP\javafx-jmods\javafx-jmods-21" `
-            --add-modules javafx.controls,javafx.fxml `
+            --add-modules javafx.controls,javafx.fxml,java.sql `
             --icon src/main/resources/images/icon.ico `
             --dest output
 
