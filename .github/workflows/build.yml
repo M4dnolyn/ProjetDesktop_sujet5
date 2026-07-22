@@ -26,8 +26,10 @@ jobs:
       - name: Build uber-JAR
         run: mvn clean package --batch-mode
 
-      - name: Remove original JAR (shade plugin artifact without dependencies)
-        run: Remove-Item -Force target/original-*.jar
+      - name: Prepare clean input directory (uber-JAR only)
+        run: |
+          New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\jpackage-input" -Force
+          Copy-Item target/PharmarcieManagement-1.0-SNAPSHOT.jar "$env:RUNNER_TEMP\jpackage-input\"
 
       - name: Upload uber-JAR
         uses: actions/upload-artifact@v4
@@ -45,7 +47,7 @@ jobs:
       - name: Generate app-image
         run: |
           jpackage --type app-image `
-            --input target/ `
+            --input "$env:RUNNER_TEMP\jpackage-input" `
             --main-jar PharmarcieManagement-1.0-SNAPSHOT.jar `
             --main-class tg.univlome.epl.pharmarciemanagement.PharmarcieManagement `
             --name PharmarcieManager `
@@ -57,7 +59,7 @@ jobs:
       - name: Generate installer
         run: |
           jpackage --type exe `
-            --input target/ `
+            --input "$env:RUNNER_TEMP\jpackage-input" `
             --main-jar PharmarcieManagement-1.0-SNAPSHOT.jar `
             --main-class tg.univlome.epl.pharmarciemanagement.PharmarcieManagement `
             --name PharmarcieManager `
