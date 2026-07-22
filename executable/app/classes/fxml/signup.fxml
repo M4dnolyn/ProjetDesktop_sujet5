@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="CENTER" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.SignUpController">
+    <VBox styleClass="card" alignment="CENTER" spacing="20" maxWidth="400">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40" />
+        </padding>
+
+        <Label styleClass="label-title" text="Créer un compte" />
+        <Label styleClass="label-subtitle" text="Inscription sécurisée" />
+
+        <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="Infinity" />
+        <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="Infinity" />
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirmer le mot de passe" maxWidth="Infinity" />
+
+        <Label fx:id="feedbackLabel" styleClass="feedback-label" managed="false" visible="false" />
+        <Button defaultButton="true" onAction="#handleSignUp" text="S'inscrire" maxWidth="Infinity" />
+        <Hyperlink onAction="#handleGoToLogin" text="Déjà un compte ? Se connecter" />
+    </VBox>
+</StackPane>

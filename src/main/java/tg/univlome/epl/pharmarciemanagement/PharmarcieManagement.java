@@ -41,6 +41,10 @@ public class PharmarcieManagement extends Application {
             // silent fallback
         }
         primaryStage.setTitle("Gestion de Pharmacie");
+        primaryStage.setWidth(900);
+        primaryStage.setHeight(600);
+        primaryStage.setMinWidth(900);
+        primaryStage.setMinHeight(600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
