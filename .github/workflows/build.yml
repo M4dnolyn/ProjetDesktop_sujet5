@@ -26,6 +26,9 @@ jobs:
       - name: Build uber-JAR
         run: mvn clean package --batch-mode
 
+      - name: Remove original JAR (shade plugin artifact without dependencies)
+        run: Remove-Item -Force target/original-*.jar
+
       - name: Upload uber-JAR
         uses: actions/upload-artifact@v4
         with:
