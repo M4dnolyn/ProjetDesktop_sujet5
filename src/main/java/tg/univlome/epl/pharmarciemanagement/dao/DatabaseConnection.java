@@ -13,20 +13,32 @@ import java.util.stream.Collectors;
 
 public class DatabaseConnection {
 
-    private static final String DB_NAME = "app.db";
+    private static final String DB_FILENAME = "app.db";
     private static Connection connection;
+
+    private static String getDbPath() {
+        // Utilise le répertoire utilisateur pour stocker la BD
+        String userHome = System.getProperty("user.home");
+        Path appDir = Paths.get(userHome, ".pharmacie");
+        try {
+            Files.createDirectories(appDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return appDir.resolve(DB_FILENAME).toString();
+    }
 
     public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                Path dbPath = Paths.get(DB_NAME);
-                boolean needsInit = !Files.exists(dbPath);
+                String dbPath = getDbPath();
+                Path dbFile = Paths.get(dbPath);
+                boolean needsInit = !Files.exists(dbFile);
 
-                connection = DriverManager.getConnection("jdbc:sqlite:" + DB_NAME);
+                connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
 
-                if (needsInit) {
-                    initDatabase();
-                }
+                // Toujours s'assurer que le schéma nécessaire existe (création idempotente)
+                ensureSchema();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,6 +57,30 @@ public class DatabaseConnection {
 
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
+        }
+    }
+
+    private static void ensureSchema() {
+        String createUsers = "CREATE TABLE IF NOT EXISTS users (\n" +
+                "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                "    username TEXT UNIQUE NOT NULL,\n" +
+                "    password_hash TEXT NOT NULL,\n" +
+                "    created_at TEXT DEFAULT CURRENT_TIMESTAMP\n" +
+                ")";
+
+        String createMedicaments = "CREATE TABLE IF NOT EXISTS medicaments (\n" +
+                "    code TEXT PRIMARY KEY,\n" +
+                "    designation TEXT NOT NULL,\n" +
+                "    quantite INTEGER NOT NULL CHECK (quantite >= 0),\n" +
+                "    prix_unitaire REAL NOT NULL CHECK (prix_unitaire >= 0),\n" +
+                "    date_peremption TEXT NOT NULL\n" +
+                ")";
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(createUsers);
+            stmt.execute(createMedicaments);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

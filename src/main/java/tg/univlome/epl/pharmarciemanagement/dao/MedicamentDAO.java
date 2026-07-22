@@ -54,4 +54,14 @@ public class MedicamentDAO {
         }
         return false;
     }
+
+    public void deleteByCode(String code) {
+        String sql = "DELETE FROM medicaments WHERE code = ?";
+        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, code);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

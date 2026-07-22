@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import tg.univlome.epl.pharmarciemanagement.models.User;
 import tg.univlome.epl.pharmarciemanagement.services.AuthService;
 import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
@@ -27,14 +28,15 @@ public class LoginController {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
+        Window owner = usernameField.getScene().getWindow();
         if (username.isEmpty() || password.isEmpty()) {
-            AlertUtils.showError("Erreur", "Veuillez remplir tous les champs.");
+            AlertUtils.showError(owner, "Erreur", "Veuillez remplir tous les champs.");
             return;
         }
 
         User user = authService.login(username, password);
         if (user == null) {
-            AlertUtils.showError("Erreur", "Nom d'utilisateur ou mot de passe incorrect.");
+            AlertUtils.showError(owner, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.");
             return;
         }
 

@@ -1,22 +1,32 @@
 package tg.univlome.epl.pharmarciemanagement.controllers;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
 import tg.univlome.epl.pharmarciemanagement.services.MedicamentService;
 import tg.univlome.epl.pharmarciemanagement.utils.SessionManager;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
@@ -31,41 +41,33 @@ public class HomeController implements Initializable {
     @FXML private TableColumn<Medicament, Integer> quantiteColumn;
     @FXML private TableColumn<Medicament, String> prixColumn;
     @FXML private TableColumn<Medicament, String> datePeremptionColumn;
+    @FXML private TableColumn<Medicament, String> statusColumn;
+    @FXML private TableColumn<Medicament, Void> deleteColumn;
 
-    final MedicamentService medicamentService = new MedicamentService();
+    public final MedicamentService medicamentService = new MedicamentService();
     private ObservableList<Medicament> medicamentList;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String username = SessionManager.getCurrentUser().getUsername();
-        welcomeLabel.setText("Connecté : " + username);
+        welcomeLabel.setText("Connecté en tant que : " + username);
 
         codeColumn.setCellValueFactory(new PropertyValueFactory<>("code"));
         designationColumn.setCellValueFactory(new PropertyValueFactory<>("designation"));
         quantiteColumn.setCellValueFactory(new PropertyValueFactory<>("quantite"));
         prixColumn.setCellValueFactory(new PropertyValueFactory<>("prixUnitaire"));
         datePeremptionColumn.setCellValueFactory(new PropertyValueFactory<>("datePeremption"));
+        statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(getStatusLabel(cellData.getValue())));
+        statusColumn.setStyle("-fx-alignment: CENTER; -fx-font-weight: bold;");
+        setupDeleteColumn();
 
-        datePeremptionColumn.setCellFactory(column -> new javafx.scene.control.TableCell<Medicament, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    String today = java.time.LocalDate.now().toString();
-                    if (item.compareTo(today) < 0) {
-                        setStyle("-fx-background-color: #ffcccc;");
-                    } else if (item.compareTo(java.time.LocalDate.now().plusDays(30).toString()) < 0) {
-                        setStyle("-fx-background-color: #ffeaa7;");
-                    } else {
-                        setStyle("");
-                    }
-                }
-            }
-        });
+        styleExpirationCells(codeColumn);
+        styleExpirationCells(designationColumn);
+        styleExpirationCells(quantiteColumn);
+        styleExpirationCells(prixColumn);
+        styleExpirationCells(datePeremptionColumn);
+        styleExpirationCells(statusColumn);
 
         loadData();
     }
@@ -82,6 +84,93 @@ public class HomeController implements Initializable {
         expiredCountLabel.setText(String.valueOf(medicamentService.getExpiredCount(medicamentList)));
     }
 
+    private void setupDeleteColumn() {
+        deleteColumn.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<Medicament, Void> call(TableColumn<Medicament, Void> param) {
+                return new TableCell<>() {
+                    private final Button deleteButton = new Button("Supprimer");
+
+                    {
+                        deleteButton.setOnAction(event -> {
+                            Medicament medicament = getTableView().getItems().get(getIndex());
+                            confirmAndDeleteMedicament(medicament);
+                        });
+                        deleteButton.setMaxWidth(Double.MAX_VALUE);
+                        deleteButton.setStyle("-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;");
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setAlignment(Pos.CENTER);
+                        if (empty || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(deleteButton);
+                        }
+                    }
+                };
+            }
+        });
+    }
+
+    private void confirmAndDeleteMedicament(Medicament medicament) {
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.initOwner(medicamentTable.getScene().getWindow());
+        confirmationAlert.initModality(Modality.WINDOW_MODAL);
+        confirmationAlert.setTitle("Confirmation de suppression");
+        confirmationAlert.setHeaderText("Supprimer le médicament");
+        confirmationAlert.setContentText("Voulez-vous vraiment supprimer le médicament '" + medicament.getDesignation() + "' ?");
+
+        Optional<ButtonType> result = confirmationAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            medicamentService.deleteMedicament(medicament);
+            loadData();
+        }
+    }
+
+    private <T> void styleExpirationCells(TableColumn<Medicament, T> column) {
+        column.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item == null ? "" : item.toString());
+                    styleCellForStatus(getTableRow().getItem());
+                }
+            }
+
+            private void styleCellForStatus(Medicament medicament) {
+                String status = getStatusLabel(medicament);
+                switch (status) {
+                    case "Périmé" -> setStyle("-fx-background-color: rgba(254, 202, 202, 0.8); -fx-text-fill: #b91c1c;");
+                    case "Expire bientôt" -> setStyle("-fx-background-color: rgba(254, 243, 199, 0.8); -fx-text-fill: #b45309;");
+                    default -> setStyle("");
+                }
+            }
+        });
+    }
+
+    private String getStatusLabel(Medicament medicament) {
+        try {
+            LocalDate peremptionDate = LocalDate.parse(medicament.getDatePeremption(), DATE_FORMATTER);
+            LocalDate today = LocalDate.now();
+            LocalDate soonThreshold = today.plusDays(7);
+
+            if (peremptionDate.isBefore(today)) {
+                return "Périmé";
+            } else if (!peremptionDate.isAfter(soonThreshold)) {
+                return "Expire bientôt";
+            }
+        } catch (Exception ignored) {
+        }
+        return "OK";
+    }
+
     @FXML
     private void handleAddMedicament() {
         try {
@@ -90,11 +179,18 @@ public class HomeController implements Initializable {
             AddMedicamentController controller = loader.getController();
             controller.setHomeController(this);
             Stage stage = (Stage) medicamentTable.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+            stage.setScene(scene);
             stage.centerOnScreen();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleRefresh() {
+        loadData();
     }
 
     @FXML

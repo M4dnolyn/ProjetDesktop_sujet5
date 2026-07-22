@@ -1,11 +1,15 @@
 package tg.univlome.epl.pharmarciemanagement.services;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import tg.univlome.epl.pharmarciemanagement.dao.MedicamentDAO;
 import tg.univlome.epl.pharmarciemanagement.exceptions.ValidationException;
 
 public class ValidationService {
 
     private final MedicamentDAO medicamentDAO;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     public ValidationService() {
         this.medicamentDAO = new MedicamentDAO();
@@ -57,6 +61,15 @@ public class ValidationService {
     public void validateDatePeremption(String date) throws ValidationException {
         if (date == null || date.trim().isEmpty()) {
             throw new ValidationException("La date de péremption est obligatoire.");
+        }
+        try {
+            LocalDate peremptionDate = LocalDate.parse(date.trim(), DATE_FORMATTER);
+            // On accepte les dates du futur et d'aujourd'hui
+            if (peremptionDate.isBefore(LocalDate.now())) {
+                throw new ValidationException("La date de péremption doit être dans le futur ou d'aujourd'hui.");
+            }
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("La date doit être au format YYYY-MM-DD (ex: 2025-12-31).");
         }
     }
 

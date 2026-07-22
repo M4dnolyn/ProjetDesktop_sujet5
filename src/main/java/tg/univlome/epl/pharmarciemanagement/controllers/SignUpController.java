@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
+import javafx.stage.Window;
 import tg.univlome.epl.pharmarciemanagement.services.AuthService;
 import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
 
@@ -30,21 +30,22 @@ public class SignUpController {
         String password = passwordField.getText();
         String confirm = confirmPasswordField.getText();
 
+        Window owner = usernameField.getScene().getWindow();
         if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
-            AlertUtils.showError("Erreur", "Veuillez remplir tous les champs.");
+            AlertUtils.showError(owner, "Erreur", "Veuillez remplir tous les champs.");
             return;
         }
 
         if (!password.equals(confirm)) {
-            AlertUtils.showError("Erreur", "Les mots de passe ne correspondent pas.");
+            AlertUtils.showError(owner, "Erreur", "Les mots de passe ne correspondent pas.");
             return;
         }
 
         if (authService.signup(username, password)) {
-            AlertUtils.showInfo("Succès", "Compte créé avec succès !");
+            AlertUtils.showInfo(owner, "Succès", "Compte créé avec succès !");
             goToLogin();
         } else {
-            AlertUtils.showError("Erreur", "Ce nom d'utilisateur existe déjà.");
+            AlertUtils.showError(owner, "Erreur", "Ce nom d'utilisateur existe déjà.");
         }
     }
 

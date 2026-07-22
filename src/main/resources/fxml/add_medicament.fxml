@@ -6,32 +6,40 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 
-<VBox spacing="15" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.AddMedicamentController">
-    <padding>
-        <Insets top="15" right="15" bottom="15" left="15" />
-    </padding>
+<StackPane alignment="CENTER" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.AddMedicamentController">
+    <VBox styleClass="card" spacing="20" maxWidth="600">
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30" />
+        </padding>
 
-    <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Ajouter un médicament" />
+        <Label styleClass="label-title" text="Ajouter un médicament" />
+        <Label styleClass="label-subtitle" text="Remplissez les informations du produit" />
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Code" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <TextField fx:id="codeField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <GridPane hgap="20" vgap="15">
+            <Label text="Code" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="codeField" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity" />
 
-        <Label text="Désignation" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <TextField fx:id="designationField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Désignation" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="designationField" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity" />
 
-        <Label text="Quantité" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <TextField fx:id="quantiteField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Quantité" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField fx:id="quantiteField" GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity" />
 
-        <Label text="Prix unitaire" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <TextField fx:id="prixField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Prix unitaire" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="prixField" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="Infinity" />
 
-        <Label text="Date péremption" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-    </GridPane>
+            <Label text="Date péremption" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" maxWidth="Infinity" />
+        </GridPane>
 
-    <Button onAction="#handleSave" text="Enregistrer" />
-    <Button onAction="#handleCancel" text="Annuler" />
-</VBox>
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <Button styleClass="button-secondary" onAction="#handleCancel" text="Annuler" />
+            <Button onAction="#handleSave" text="Enregistrer" />
+        </HBox>
+    </VBox>
+</StackPane>

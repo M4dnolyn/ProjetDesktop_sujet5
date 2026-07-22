@@ -7,7 +7,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import tg.univlome.epl.pharmarciemanagement.exceptions.ValidationException;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
+import tg.univlome.epl.pharmarciemanagement.services.ValidationService;
 import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
 
 public class AddMedicamentController {
@@ -19,6 +22,7 @@ public class AddMedicamentController {
     @FXML private DatePicker datePicker;
 
     private HomeController homeController;
+    private final ValidationService validationService = new ValidationService();
 
     public void setHomeController(HomeController homeController) {
         this.homeController = homeController;
@@ -30,39 +34,21 @@ public class AddMedicamentController {
         String designation = designationField.getText().trim();
         String quantiteText = quantiteField.getText().trim();
         String prixText = prixField.getText().trim();
+        String dateText = (datePicker.getValue() != null) ? datePicker.getValue().toString() : "";
 
-        if (code.isEmpty() || designation.isEmpty() || quantiteText.isEmpty() || prixText.isEmpty() || datePicker.getValue() == null) {
-            AlertUtils.showError("Erreur", "Veuillez remplir tous les champs.");
-            return;
-        }
-
-        int quantite;
         try {
-            quantite = Integer.parseInt(quantiteText);
-            if (quantite < 0) throw new NumberFormatException();
+            validationService.validateAll(code, designation, quantiteText, prixText, dateText);
+            int quantite = Integer.parseInt(quantiteText);
+            Medicament m = new Medicament(code, designation, quantite, prixText, dateText);
+            homeController.medicamentService.addMedicament(m);
+            Window owner = codeField.getScene().getWindow();
+            AlertUtils.showInfo(owner, "Succès", "Médicament ajouté !");
+            goHome();
+        } catch (ValidationException e) {
+            AlertUtils.showError(codeField.getScene().getWindow(), "Erreur de validation", e.getMessage());
         } catch (NumberFormatException e) {
-            AlertUtils.showError("Erreur", "La quantité doit être un entier positif.");
-            return;
+            AlertUtils.showError(codeField.getScene().getWindow(), "Erreur", "Une erreur est survenue lors du traitement des données.");
         }
-
-        double prix;
-        try {
-            prix = Double.parseDouble(prixText.replace(",", "."));
-            if (prix < 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            AlertUtils.showError("Erreur", "Le prix doit être un nombre positif.");
-            return;
-        }
-
-        if (homeController != null && homeController.medicamentService.codeExists(code)) {
-            AlertUtils.showError("Erreur", "Ce code médicament existe déjà.");
-            return;
-        }
-
-        Medicament m = new Medicament(code, designation, quantite, prixText, datePicker.getValue().toString());
-        homeController.medicamentService.addMedicament(m);
-        AlertUtils.showInfo("Succès", "Médicament ajouté !");
-        goHome();
     }
 
     @FXML

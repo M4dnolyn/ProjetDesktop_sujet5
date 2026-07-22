@@ -9,23 +9,27 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 
-<VBox alignment="CENTER" spacing="15" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.LoginController">
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40" />
-    </padding>
+<StackPane alignment="CENTER" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tg.univlome.epl.pharmarciemanagement.controllers.LoginController">
+    <!-- Fond centré -->
+    <VBox styleClass="card" alignment="CENTER" spacing="20" maxWidth="400">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40" />
+        </padding>
 
-    <ImageView fitHeight="80" fitWidth="80" preserveRatio="true">
-        <Image url="/images/logo.png" />
-    </ImageView>
+        <ImageView fitHeight="70" fitWidth="70" preserveRatio="true">
+            <Image url="/images/logo.png" />
+        </ImageView>
 
-    <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Connexion" />
+        <Label styleClass="label-title" text="Connexion" />
+        <Label styleClass="label-subtitle" text="Accédez à la gestion du stock" />
 
-    <TextField fx:id="usernameField" promptText="Nom d'utilisateur" />
+        <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="Infinity" />
+        <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="Infinity" />
 
-    <PasswordField fx:id="passwordField" promptText="Mot de passe" />
-
-    <Button defaultButton="true" onAction="#handleLogin" text="Se connecter" />
-
-    <Hyperlink onAction="#handleGoToSignUp" text="Créer un compte" />
-</VBox>
+        <Button defaultButton="true" onAction="#handleLogin" text="Se connecter" maxWidth="Infinity" />
+        
+        <Hyperlink onAction="#handleGoToSignUp" text="Pas encore de compte ? S'inscrire" />
+    </VBox>
+</StackPane>
