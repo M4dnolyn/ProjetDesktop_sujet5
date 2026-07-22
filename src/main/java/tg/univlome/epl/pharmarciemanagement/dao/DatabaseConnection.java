@@ -15,6 +15,7 @@ public class DatabaseConnection {
 
     private static final String DB_FILENAME = "app.db";
     private static Connection connection;
+    private static boolean shutdownHookRegistered = false;
 
     private static String getDbPath() {
         // Utilise le répertoire utilisateur pour stocker la BD
@@ -39,6 +40,11 @@ public class DatabaseConnection {
 
                 // Toujours s'assurer que le schéma nécessaire existe (création idempotente)
                 ensureSchema();
+
+                if (!shutdownHookRegistered) {
+                    shutdownHookRegistered = true;
+                    Runtime.getRuntime().addShutdownHook(new Thread(DatabaseConnection::close));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

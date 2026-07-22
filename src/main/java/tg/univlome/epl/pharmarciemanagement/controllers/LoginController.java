@@ -8,6 +8,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import tg.univlome.epl.pharmarciemanagement.exceptions.AuthenticationException;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.models.User;
 import tg.univlome.epl.pharmarciemanagement.services.AuthService;
 import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
@@ -34,14 +36,15 @@ public class LoginController {
             return;
         }
 
-        User user = authService.login(username, password);
-        if (user == null) {
-            AlertUtils.showError(owner, "Erreur", "Nom d'utilisateur ou mot de passe incorrect.");
-            return;
+        try {
+            User user = authService.login(username, password);
+            SessionManager.login(user);
+            loadHome();
+        } catch (AuthenticationException e) {
+            AlertUtils.showError(owner, "Erreur", e.getMessage());
+        } catch (DatabaseException e) {
+            AlertUtils.showError(owner, "Erreur", "Erreur de base de données : " + e.getMessage());
         }
-
-        SessionManager.login(user);
-        loadHome();
     }
 
     @FXML

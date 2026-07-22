@@ -5,11 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
 
 public class MedicamentDAO {
 
-    public ObservableList<Medicament> findAll() {
+    public ObservableList<Medicament> findAll() throws DatabaseException {
         ObservableList<Medicament> list = FXCollections.observableArrayList();
         String sql = "SELECT code, designation, quantite, prix_unitaire, date_peremption FROM medicaments ORDER BY code";
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
@@ -19,49 +20,48 @@ public class MedicamentDAO {
                     rs.getString("code"),
                     rs.getString("designation"),
                     rs.getInt("quantite"),
-                    rs.getString("prix_unitaire"),
+                    rs.getDouble("prix_unitaire"),
                     rs.getString("date_peremption")
                 ));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erreur lors du chargement des médicaments.", e);
         }
         return list;
     }
 
-    public void insert(Medicament m) {
+    public void insert(Medicament m) throws DatabaseException {
         String sql = "INSERT INTO medicaments (code, designation, quantite, prix_unitaire, date_peremption) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
             stmt.setString(1, m.getCode());
             stmt.setString(2, m.getDesignation());
             stmt.setInt(3, m.getQuantite());
-            stmt.setString(4, m.getPrixUnitaire());
+            stmt.setDouble(4, m.getPrixUnitaire());
             stmt.setString(5, m.getDatePeremption());
             stmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erreur lors de l'ajout du médicament.", e);
         }
     }
 
-    public boolean codeExists(String code) {
+    public boolean codeExists(String code) throws DatabaseException {
         String sql = "SELECT COUNT(*) FROM medicaments WHERE code = ?";
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
             stmt.setString(1, code);
             ResultSet rs = stmt.executeQuery();
             return rs.next() && rs.getInt(1) > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erreur lors de la vérification du code.", e);
         }
-        return false;
     }
 
-    public void deleteByCode(String code) {
+    public void deleteByCode(String code) throws DatabaseException {
         String sql = "DELETE FROM medicaments WHERE code = ?";
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
             stmt.setString(1, code);
             stmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erreur lors de la suppression du médicament.", e);
         }
     }
 }

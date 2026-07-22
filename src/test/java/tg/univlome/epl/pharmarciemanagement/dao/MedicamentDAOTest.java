@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
 
 import java.sql.Statement;
@@ -16,7 +17,6 @@ public class MedicamentDAOTest {
 
     @Before
     public void setUp() {
-        // Initialiser la base de données pour les tests
         dao = new MedicamentDAO();
         clearMedicamentsTable();
     }
@@ -36,15 +36,15 @@ public class MedicamentDAOTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testFindAll() throws DatabaseException {
         ObservableList<Medicament> list = dao.findAll();
         assertNotNull("findAll() doit retourner une liste non null", list);
         assertTrue("findAll() doit retourner une liste (peut être vide)", list.size() >= 0);
     }
 
     @Test
-    public void testInsertAndFindAll() {
-        Medicament med = new Medicament("TEST001", "Test Médicament", 10, "100", "2025-12-31");
+    public void testInsertAndFindAll() throws DatabaseException {
+        Medicament med = new Medicament("TEST001", "Test Médicament", 10, 100.0, "2025-12-31");
         dao.insert(med);
         
         ObservableList<Medicament> list = dao.findAll();
@@ -53,8 +53,8 @@ public class MedicamentDAOTest {
     }
 
     @Test
-    public void testCodeExists() {
-        Medicament med = new Medicament("UNIQUE001", "Aspirin", 5, "50", "2025-12-31");
+    public void testCodeExists() throws DatabaseException {
+        Medicament med = new Medicament("UNIQUE001", "Aspirin", 5, 50.0, "2025-12-31");
         dao.insert(med);
         
         assertTrue("Le code doit exister après insertion", dao.codeExists("UNIQUE001"));
@@ -62,10 +62,10 @@ public class MedicamentDAOTest {
     }
 
     @Test
-    public void testInsertMultipleMedicaments() {
-        Medicament med1 = new Medicament("MED001", "Paracétamol", 20, "75", "2025-12-31");
-        Medicament med2 = new Medicament("MED002", "Amoxicilline", 15, "200", "2026-01-31");
-        Medicament med3 = new Medicament("MED003", "Ibuprofène", 30, "100", "2025-11-30");
+    public void testInsertMultipleMedicaments() throws DatabaseException {
+        Medicament med1 = new Medicament("MED001", "Paracétamol", 20, 75.0, "2025-12-31");
+        Medicament med2 = new Medicament("MED002", "Amoxicilline", 15, 200.0, "2026-01-31");
+        Medicament med3 = new Medicament("MED003", "Ibuprofène", 30, 100.0, "2025-11-30");
         
         dao.insert(med1);
         dao.insert(med2);
@@ -76,8 +76,8 @@ public class MedicamentDAOTest {
     }
 
     @Test
-    public void testDuplicateCodeRejection() {
-        Medicament med1 = new Medicament("DUP001", "Médicament 1", 10, "100", "2025-12-31");
+    public void testDuplicateCodeRejection() throws DatabaseException {
+        Medicament med1 = new Medicament("DUP001", "Médicament 1", 10, 100.0, "2025-12-31");
         dao.insert(med1);
         
         assertTrue("Le premier code doit exister", dao.codeExists("DUP001"));

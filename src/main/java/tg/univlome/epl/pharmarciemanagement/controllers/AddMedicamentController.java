@@ -8,6 +8,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.exceptions.ValidationException;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
 import tg.univlome.epl.pharmarciemanagement.services.ValidationService;
@@ -39,13 +40,16 @@ public class AddMedicamentController {
         try {
             validationService.validateAll(code, designation, quantiteText, prixText, dateText);
             int quantite = Integer.parseInt(quantiteText);
-            Medicament m = new Medicament(code, designation, quantite, prixText, dateText);
-            homeController.medicamentService.addMedicament(m);
+            double prix = Double.parseDouble(prixText.trim().replace(",", "."));
+            Medicament m = new Medicament(code, designation, quantite, prix, dateText);
+            homeController.getMedicamentService().addMedicament(m);
             Window owner = codeField.getScene().getWindow();
             AlertUtils.showInfo(owner, "Succès", "Médicament ajouté !");
             goHome();
         } catch (ValidationException e) {
             AlertUtils.showError(codeField.getScene().getWindow(), "Erreur de validation", e.getMessage());
+        } catch (DatabaseException e) {
+            AlertUtils.showError(codeField.getScene().getWindow(), "Erreur", "Erreur de base de données : " + e.getMessage());
         } catch (NumberFormatException e) {
             AlertUtils.showError(codeField.getScene().getWindow(), "Erreur", "Une erreur est survenue lors du traitement des données.");
         }

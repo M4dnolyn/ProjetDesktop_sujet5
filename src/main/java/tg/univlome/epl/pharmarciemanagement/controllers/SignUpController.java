@@ -8,6 +8,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import tg.univlome.epl.pharmarciemanagement.exceptions.AuthenticationException;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.services.AuthService;
 import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
 
@@ -41,11 +43,14 @@ public class SignUpController {
             return;
         }
 
-        if (authService.signup(username, password)) {
+        try {
+            authService.signup(username, password);
             AlertUtils.showInfo(owner, "Succès", "Compte créé avec succès !");
             goToLogin();
-        } else {
-            AlertUtils.showError(owner, "Erreur", "Ce nom d'utilisateur existe déjà.");
+        } catch (AuthenticationException e) {
+            AlertUtils.showError(owner, "Erreur", e.getMessage());
+        } catch (DatabaseException e) {
+            AlertUtils.showError(owner, "Erreur", "Erreur de base de données : " + e.getMessage());
         }
     }
 

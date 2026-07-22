@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import tg.univlome.epl.pharmarciemanagement.dao.MedicamentDAO;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
 
 public class MedicamentService {
@@ -15,19 +16,19 @@ public class MedicamentService {
         this.medicamentDAO = new MedicamentDAO();
     }
 
-    public ObservableList<Medicament> getAllMedicaments() {
+    public ObservableList<Medicament> getAllMedicaments() throws DatabaseException {
         return medicamentDAO.findAll();
     }
 
-    public void addMedicament(Medicament m) {
+    public void addMedicament(Medicament m) throws DatabaseException {
         medicamentDAO.insert(m);
     }
 
-    public void deleteMedicament(Medicament m) {
+    public void deleteMedicament(Medicament m) throws DatabaseException {
         medicamentDAO.deleteByCode(m.getCode());
     }
 
-    public boolean codeExists(String code) {
+    public boolean codeExists(String code) throws DatabaseException {
         return medicamentDAO.codeExists(code);
     }
 
@@ -37,7 +38,7 @@ public class MedicamentService {
 
     public double getStockValue(ObservableList<Medicament> list) {
         return list.stream()
-                .mapToDouble(m -> m.getQuantite() * Double.parseDouble(m.getPrixUnitaire().replace(",", ".")))
+                .mapToDouble(m -> m.getQuantite() * m.getPrixUnitaire())
                 .sum();
     }
 

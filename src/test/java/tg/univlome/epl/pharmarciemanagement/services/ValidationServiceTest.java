@@ -1,6 +1,7 @@
 package tg.univlome.epl.pharmarciemanagement.services;
 
 import org.junit.Test;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.exceptions.ValidationException;
 import java.time.LocalDate;
 
@@ -69,12 +70,12 @@ public class ValidationServiceTest {
 
     // Tests Code
     @Test(expected = ValidationException.class)
-    public void testCode_empty() throws ValidationException {
+    public void testCode_empty() throws ValidationException, DatabaseException {
         service.validateCode("");
     }
 
     @Test(expected = ValidationException.class)
-    public void testCode_null() throws ValidationException {
+    public void testCode_null() throws ValidationException, DatabaseException {
         service.validateCode(null);
     }
 
@@ -136,13 +137,13 @@ public class ValidationServiceTest {
 
     // Tests validateAll
     @Test(expected = ValidationException.class)
-    public void testValidateAll_invalidQuantite() throws ValidationException {
+    public void testValidateAll_invalidQuantite() throws ValidationException, DatabaseException {
         String futureDate = LocalDate.now().plusMonths(6).toString();
         service.validateAll("CODE001", "Test", "abc", "100", futureDate);
     }
 
     @Test(expected = ValidationException.class)
-    public void testValidateAll_invalidDate() throws ValidationException {
+    public void testValidateAll_invalidDate() throws ValidationException, DatabaseException {
         service.validateAll("CODE001", "Test", "10", "100", "31/12/2025");
     }
 }

@@ -24,8 +24,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.models.Medicament;
 import tg.univlome.epl.pharmarciemanagement.services.MedicamentService;
+import tg.univlome.epl.pharmarciemanagement.utils.AlertUtils;
 import tg.univlome.epl.pharmarciemanagement.utils.SessionManager;
 
 public class HomeController implements Initializable {
@@ -39,13 +41,17 @@ public class HomeController implements Initializable {
     @FXML private TableColumn<Medicament, String> codeColumn;
     @FXML private TableColumn<Medicament, String> designationColumn;
     @FXML private TableColumn<Medicament, Integer> quantiteColumn;
-    @FXML private TableColumn<Medicament, String> prixColumn;
+    @FXML private TableColumn<Medicament, Double> prixColumn;
     @FXML private TableColumn<Medicament, String> datePeremptionColumn;
     @FXML private TableColumn<Medicament, String> statusColumn;
     @FXML private TableColumn<Medicament, Void> deleteColumn;
 
-    public final MedicamentService medicamentService = new MedicamentService();
+    private final MedicamentService medicamentService = new MedicamentService();
     private ObservableList<Medicament> medicamentList;
+
+    public MedicamentService getMedicamentService() {
+        return medicamentService;
+    }
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     @Override
@@ -65,7 +71,7 @@ public class HomeController implements Initializable {
         styleExpirationCells(codeColumn);
         styleExpirationCells(designationColumn);
         styleExpirationCells(quantiteColumn);
-        styleExpirationCells(prixColumn);
+        setupPrixColumn();
         styleExpirationCells(datePeremptionColumn);
         styleExpirationCells(statusColumn);
 
@@ -73,9 +79,13 @@ public class HomeController implements Initializable {
     }
 
     public void loadData() {
-        medicamentList = medicamentService.getAllMedicaments();
-        medicamentTable.setItems(medicamentList);
-        updateStats();
+        try {
+            medicamentList = medicamentService.getAllMedicaments();
+            medicamentTable.setItems(medicamentList);
+            updateStats();
+        } catch (DatabaseException e) {
+            AlertUtils.showError(medicamentTable.getScene().getWindow(), "Erreur", "Impossible de charger les données : " + e.getMessage());
+        }
     }
 
     private void updateStats() {
@@ -125,9 +135,39 @@ public class HomeController implements Initializable {
 
         Optional<ButtonType> result = confirmationAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            medicamentService.deleteMedicament(medicament);
-            loadData();
+            try {
+                medicamentService.deleteMedicament(medicament);
+                loadData();
+            } catch (DatabaseException e) {
+                AlertUtils.showError(medicamentTable.getScene().getWindow(), "Erreur", "Impossible de supprimer le médicament : " + e.getMessage());
+            }
         }
+    }
+
+    private void setupPrixColumn() {
+        prixColumn.setCellValueFactory(new PropertyValueFactory<>("prixUnitaire"));
+        prixColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(String.format("%.2f", item));
+                    styleCellForStatus(getTableRow().getItem());
+                }
+            }
+
+            private void styleCellForStatus(Medicament medicament) {
+                String status = getStatusLabel(medicament);
+                switch (status) {
+                    case "Périmé" -> setStyle("-fx-background-color: rgba(254, 202, 202, 0.8); -fx-text-fill: #b91c1c;");
+                    case "Expire bientôt" -> setStyle("-fx-background-color: rgba(254, 243, 199, 0.8); -fx-text-fill: #b45309;");
+                    default -> setStyle("");
+                }
+            }
+        });
     }
 
     private <T> void styleExpirationCells(TableColumn<Medicament, T> column) {

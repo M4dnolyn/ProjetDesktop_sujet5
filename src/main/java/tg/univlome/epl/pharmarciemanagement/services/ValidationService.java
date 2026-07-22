@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import tg.univlome.epl.pharmarciemanagement.dao.MedicamentDAO;
+import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.exceptions.ValidationException;
 
 public class ValidationService {
@@ -15,7 +16,7 @@ public class ValidationService {
         this.medicamentDAO = new MedicamentDAO();
     }
 
-    public void validateCode(String code) throws ValidationException {
+    public void validateCode(String code) throws ValidationException, DatabaseException {
         if (code == null || code.trim().isEmpty()) {
             throw new ValidationException("Le code ne peut pas être vide.");
         }
@@ -74,7 +75,7 @@ public class ValidationService {
     }
 
     public void validateAll(String code, String designation, String quantite, String prix, String datePeremption)
-            throws ValidationException {
+            throws ValidationException, DatabaseException {
         validateCode(code);
         validateDesignation(designation);
         validateQuantite(quantite);
