@@ -36,6 +36,7 @@ public class HomeController implements Initializable {
     @FXML private Label totalCountLabel;
     @FXML private Label stockValueLabel;
     @FXML private Label expiredCountLabel;
+    @FXML private Label feedbackLabel;
 
     @FXML private TableView<Medicament> medicamentTable;
     @FXML private TableColumn<Medicament, String> codeColumn;
@@ -83,8 +84,9 @@ public class HomeController implements Initializable {
             medicamentList = medicamentService.getAllMedicaments();
             medicamentTable.setItems(medicamentList);
             updateStats();
+            AlertUtils.clearInline(feedbackLabel);
         } catch (DatabaseException e) {
-            AlertUtils.showError(medicamentTable.getScene().getWindow(), "Erreur", "Impossible de charger les données : " + e.getMessage());
+            AlertUtils.showInline(feedbackLabel, "Impossible de charger les données : " + e.getMessage(), false);
         }
     }
 
@@ -139,7 +141,7 @@ public class HomeController implements Initializable {
                 medicamentService.deleteMedicament(medicament);
                 loadData();
             } catch (DatabaseException e) {
-                AlertUtils.showError(medicamentTable.getScene().getWindow(), "Erreur", "Impossible de supprimer le médicament : " + e.getMessage());
+                AlertUtils.showInline(feedbackLabel, "Impossible de supprimer le médicament : " + e.getMessage(), false);
             }
         }
     }

@@ -4,10 +4,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import tg.univlome.epl.pharmarciemanagement.exceptions.AuthenticationException;
 import tg.univlome.epl.pharmarciemanagement.exceptions.DatabaseException;
 import tg.univlome.epl.pharmarciemanagement.models.User;
@@ -23,6 +23,9 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    private Label feedbackLabel;
+
     private final AuthService authService = new AuthService();
 
     @FXML
@@ -30,9 +33,9 @@ public class LoginController {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        Window owner = usernameField.getScene().getWindow();
+        AlertUtils.clearInline(feedbackLabel);
         if (username.isEmpty() || password.isEmpty()) {
-            AlertUtils.showError(owner, "Erreur", "Veuillez remplir tous les champs.");
+            AlertUtils.showInline(feedbackLabel, "Veuillez remplir tous les champs.", false);
             return;
         }
 
@@ -41,9 +44,9 @@ public class LoginController {
             SessionManager.login(user);
             loadHome();
         } catch (AuthenticationException e) {
-            AlertUtils.showError(owner, "Erreur", e.getMessage());
+            AlertUtils.showInline(feedbackLabel, e.getMessage(), false);
         } catch (DatabaseException e) {
-            AlertUtils.showError(owner, "Erreur", "Erreur de base de données : " + e.getMessage());
+            AlertUtils.showInline(feedbackLabel, "Erreur de base de données : " + e.getMessage(), false);
         }
     }
 

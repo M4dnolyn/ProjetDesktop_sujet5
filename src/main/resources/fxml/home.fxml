@@ -29,6 +29,7 @@
         <Button styleClass="button-danger" onAction="#handleLogout" text="Se déconnecter" />
     </HBox>
 
+    <Label fx:id="feedbackLabel" styleClass="feedback-label" managed="false" visible="false" />
     <!-- Cartes de statistiques -->
     <HBox spacing="20">
         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">

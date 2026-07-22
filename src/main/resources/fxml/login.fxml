@@ -28,6 +28,7 @@
         <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="Infinity" />
         <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="Infinity" />
 
+        <Label fx:id="feedbackLabel" styleClass="feedback-label" managed="false" visible="false" />
         <Button defaultButton="true" onAction="#handleLogin" text="Se connecter" maxWidth="Infinity" />
         
         <Hyperlink onAction="#handleGoToSignUp" text="Pas encore de compte ? S'inscrire" />

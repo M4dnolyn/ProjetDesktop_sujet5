@@ -22,6 +22,7 @@
         <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="Infinity" />
         <PasswordField fx:id="confirmPasswordField" promptText="Confirmer le mot de passe" maxWidth="Infinity" />
 
+        <Label fx:id="feedbackLabel" styleClass="feedback-label" managed="false" visible="false" />
         <Button defaultButton="true" onAction="#handleSignUp" text="S'inscrire" maxWidth="Infinity" />
         <Hyperlink onAction="#handleGoToLogin" text="Déjà un compte ? Se connecter" />
     </VBox>

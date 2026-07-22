@@ -37,6 +37,7 @@
             <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" maxWidth="Infinity" />
         </GridPane>
 
+        <Label fx:id="feedbackLabel" styleClass="feedback-label" managed="false" visible="false" />
         <HBox spacing="15" alignment="CENTER_RIGHT">
             <Button styleClass="button-secondary" onAction="#handleCancel" text="Annuler" />
             <Button onAction="#handleSave" text="Enregistrer" />

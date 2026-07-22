@@ -159,3 +159,21 @@
 }
 .stat-value-warning { -fx-text-fill: #ef4444; }
 .stat-value-success { -fx-text-fill: #10b981; }
+
+/* ===== Messages de feedback inline ===== */
+.feedback-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 12;
+    -fx-background-radius: 6;
+    -fx-alignment: center;
+    -fx-max-width: Infinity;
+}
+.feedback-error {
+    -fx-text-fill: #b91c1c;
+    -fx-background-color: #fecaca;
+}
+.feedback-success {
+    -fx-text-fill: #065f46;
+    -fx-background-color: #a7f3d0;
+}
